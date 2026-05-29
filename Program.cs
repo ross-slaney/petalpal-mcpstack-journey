@@ -147,6 +147,13 @@ app.UseStaticFiles();
 app.MapHealthChecks("/health");
 app.MapSqlOS();
 
+app.MapGet("/oauth/callback", (IWebHostEnvironment environment) =>
+{
+    var indexPath = Path.Combine(environment.WebRootPath ?? "wwwroot", "index.html");
+    return Results.File(indexPath, "text/html");
+})
+.ExcludeFromDescription();
+
 app.UseSqlOSAccessTokenValidation(options =>
 {
     options.ExpectedAudience = resource;

@@ -1,8 +1,19 @@
-# PetalPal Sample API
+# PetalPal Garden
 
-PetalPal is a deliberately small API for demonstrating the customer journey in
-the MCP Stack blog post. It gives each signed-in SqlOS user a private garden and
-exposes a few ChatGPT-friendly operations:
+PetalPal is a deliberately small SaaS-style app for demonstrating the customer
+journey in the MCP Stack blog post. A user signs in, gets a private garden,
+adds and waters plants, and then the same OAuth-protected API is exposed to
+ChatGPT through MCP Stack.
+
+The browser app includes:
+
+- first-party SqlOS OAuth sign-in
+- a normal signed-in garden dashboard
+- add plant and water plant actions
+- per-user garden provisioning through SqlOS FGA
+- a ChatGPT setup panel with the MCP Stack Gateway URL
+
+The API exposes a few ChatGPT-friendly operations:
 
 - get the current user's garden
 - list plants
@@ -32,7 +43,8 @@ ConnectionStrings__DefaultConnection='Server=127.0.0.1,60412;Database=PetalPalSa
 
 Useful URLs:
 
-- `http://localhost:5098/` for the small landing page
+- `http://localhost:5098/` for the PetalPal web app
+- `http://localhost:5098/oauth/callback` for the local browser OAuth callback
 - `http://localhost:5098/swagger` for OpenAPI
 - `http://localhost:5098/sample/config` for the SqlOS OAuth configuration
 - `http://localhost:5098/.well-known/oauth-protected-resource` for protected resource metadata
