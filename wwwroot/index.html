@@ -551,7 +551,8 @@
           <a href="/swagger">API docs</a>
         </nav>
         <div class="topbar-actions">
-          <button class="button primary" id="signInTop" type="button">Sign in</button>
+          <button class="button ghost" id="signInTop" type="button">Sign in</button>
+          <button class="button primary" id="startTop" type="button">Start free</button>
           <button class="button ghost" id="signOutTop" type="button" hidden>Sign out</button>
         </div>
       </header>
@@ -560,14 +561,16 @@
         <section class="hero" id="signedOutView" aria-labelledby="heroTitle">
           <div>
             <div class="eyebrow">A normal SaaS app with OAuth behind it</div>
-            <h1 id="heroTitle">Take care of your garden, then connect it to ChatGPT.</h1>
+            <h1 id="heroTitle">A tiny garden SaaS your users can connect to ChatGPT.</h1>
             <p class="lead">
-              PetalPal is a tiny product dashboard backed by SqlOS sign-in and FGA. Sign in,
-              create a few plants, water them, and expose the same protected API through MCP Stack.
+              PetalPal is a real signed-in product dashboard backed by SqlOS OAuth and FGA.
+              Users create a garden, manage plants, and MCP Stack exposes the same protected
+              API to ChatGPT without a shared API key.
             </p>
             <div class="hero-actions">
-              <button class="button primary" id="signInHero" type="button">Sign in to start</button>
-              <a class="button" href="/swagger">View API docs</a>
+              <button class="button primary" id="startHero" type="button">Start free</button>
+              <button class="button" id="signInHero" type="button">Sign in</button>
+              <a class="button ghost" href="/swagger">API docs</a>
             </div>
             <div class="trust-row">
               <span class="pill">SqlOS OAuth</span>
@@ -629,7 +632,7 @@
                   <div class="status-value" id="sessionStatus">Signed in</div>
                 </div>
                 <div class="status-item">
-                  <div class="status-label">Garden resource</div>
+                  <div class="status-label">Authorization</div>
                   <div class="status-value" id="resourceStatus">Loading</div>
                 </div>
                 <div class="status-item">
@@ -700,7 +703,9 @@
         signedOutView: document.getElementById("signedOutView"),
         appView: document.getElementById("appView"),
         signInTop: document.getElementById("signInTop"),
+        startTop: document.getElementById("startTop"),
         signInHero: document.getElementById("signInHero"),
+        startHero: document.getElementById("startHero"),
         signOutTop: document.getElementById("signOutTop"),
         refreshGarden: document.getElementById("refreshGarden"),
         gardenTitle: document.getElementById("gardenTitle"),
@@ -778,6 +783,7 @@
         elements.signedOutView.hidden = true;
         elements.appView.hidden = false;
         elements.signInTop.hidden = true;
+        elements.startTop.hidden = true;
         elements.signOutTop.hidden = false;
       }
 
@@ -785,10 +791,19 @@
         elements.signedOutView.hidden = false;
         elements.appView.hidden = true;
         elements.signInTop.hidden = false;
+        elements.startTop.hidden = false;
         elements.signOutTop.hidden = true;
       }
 
       async function signIn() {
+        await beginAuth("signin");
+      }
+
+      async function signUp() {
+        await beginAuth("signup");
+      }
+
+      async function beginAuth(mode) {
         const verifier = randomBase64Url(48);
         const state = randomBase64Url(24);
         const challenge = await createCodeChallenge(verifier);
@@ -805,6 +820,9 @@
         authorizeUrl.searchParams.set("state", state);
         authorizeUrl.searchParams.set("code_challenge", challenge);
         authorizeUrl.searchParams.set("code_challenge_method", "S256");
+        if (mode === "signup") {
+          authorizeUrl.searchParams.set("screen_hint", "signup");
+        }
 
         window.location.assign(authorizeUrl.toString());
       }
@@ -940,10 +958,11 @@
         const response = await apiFetch("/api/gardens/me");
         const garden = await response.json();
 
-        elements.gardenTitle.textContent = garden.name;
-        elements.gardenLead.textContent = `Signed in as ${garden.subjectId}. PetalPal created this garden and granted you owner access through SqlOS FGA.`;
-        elements.sessionStatus.textContent = "Signed in";
-        elements.resourceStatus.textContent = garden.resourceId;
+        elements.gardenTitle.textContent = "My Pocket Garden";
+        elements.gardenLead.textContent =
+          "Your plants are scoped to your signed-in account. The API behind this page is the same one MCP Stack exposes to ChatGPT.";
+        elements.sessionStatus.textContent = "Signed in with SqlOS";
+        elements.resourceStatus.textContent = "Owner grant active";
         renderPlants(garden.plants || []);
       }
 
@@ -967,6 +986,8 @@
         }
 
         elements.plantForm.reset();
+        elements.plantName.value = "";
+        elements.plantNote.value = "";
         elements.plantMood.value = "cozy";
         showToast("Plant added.");
         await loadGarden();
@@ -992,7 +1013,9 @@
         await completeOAuthCallback();
 
         elements.signInTop.addEventListener("click", signIn);
+        elements.startTop.addEventListener("click", signUp);
         elements.signInHero.addEventListener("click", signIn);
+        elements.startHero.addEventListener("click", signUp);
         elements.signOutTop.addEventListener("click", signOut);
         elements.refreshGarden.addEventListener("click", () => loadGarden().catch(handleError));
         elements.plantForm.addEventListener("submit", (event) => createPlant(event).catch(handleError));

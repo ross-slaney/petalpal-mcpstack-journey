@@ -142,17 +142,35 @@ var app = builder.Build();
 
 app.UseSwagger();
 app.UseSwaggerUI();
-app.UseDefaultFiles();
-app.UseStaticFiles();
+app.UseStaticFiles(new StaticFileOptions
+{
+    OnPrepareResponse = context =>
+    {
+        if (string.Equals(context.File.Name, "index.html", StringComparison.OrdinalIgnoreCase))
+        {
+            context.Context.Response.Headers.CacheControl = "no-store, no-cache, max-age=0";
+            context.Context.Response.Headers.Pragma = "no-cache";
+            context.Context.Response.Headers.Expires = "0";
+        }
+    }
+});
 app.MapHealthChecks("/health");
 app.MapSqlOS();
 
-app.MapGet("/oauth/callback", (IWebHostEnvironment environment) =>
+app.MapGet("/", ServeIndex)
+.ExcludeFromDescription();
+
+app.MapGet("/oauth/callback", ServeIndex)
+.ExcludeFromDescription();
+
+static IResult ServeIndex(IWebHostEnvironment environment, HttpContext httpContext)
 {
+    httpContext.Response.Headers.CacheControl = "no-store, no-cache, max-age=0";
+    httpContext.Response.Headers.Pragma = "no-cache";
+    httpContext.Response.Headers.Expires = "0";
     var indexPath = Path.Combine(environment.WebRootPath ?? "wwwroot", "index.html");
     return Results.File(indexPath, "text/html");
-})
-.ExcludeFromDescription();
+}
 
 app.UseSqlOSAccessTokenValidation(options =>
 {
