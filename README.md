@@ -10,6 +10,13 @@ exposes a few ChatGPT-friendly operations:
 - water a plant
 - trace the SqlOS FGA decision for a plant write
 
+Live walkthrough artifacts:
+
+- App: https://petalpal-mcpstack-journey.azurewebsites.net
+- OpenAPI: https://petalpal-mcpstack-journey.azurewebsites.net/swagger/v1/swagger.json
+- MCP Stack guide: https://mcpstack.com/guides/petalpal-api-mcp
+- Verified MCP Gateway URL: https://api.mcpstack.com/api/v1/gateway/gw_petalpal-api-mcp/mcp
+
 Run it locally with SQL Server available:
 
 ```bash
@@ -36,20 +43,22 @@ pure local run, export the Swagger JSON and pass it with `--openapi-file`.
 
 ```bash
 mcpstack servers create \
-  --name petalpal \
-  --slug petalpal \
+  --name petalpal-api-mcp \
   --runtime-type hosted \
-  --openapi-url https://petalpal.example.com/swagger/v1/swagger.json \
+  --openapi-url https://petalpal-mcpstack-journey.azurewebsites.net/swagger/v1/swagger.json \
   --json
 
 mcpstack gateways create \
   --name "PetalPal SqlOS" \
   --provider sqlos \
-  --auth-server-url http://localhost:5098/sqlos/auth \
+  --auth-server-url https://petalpal-mcpstack-journey.azurewebsites.net/sqlos/auth \
   --client-id petalpal-mcpstack-gateway \
-  --resource http://localhost:5098/api \
+  --resource https://petalpal-mcpstack-journey.azurewebsites.net/api \
   --scopes "openid profile email gardens.read gardens.write" \
   --json
 
-mcpstack gateway-public doctor petalpal --client chatgpt-web
+mcpstack gateway-public doctor \
+  --url https://api.mcpstack.com/api/v1/gateway/gw_petalpal-api-mcp/mcp \
+  --client chatgpt-web \
+  --json
 ```
