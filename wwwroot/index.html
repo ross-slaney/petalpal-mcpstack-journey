@@ -821,10 +821,23 @@
         authorizeUrl.searchParams.set("code_challenge", challenge);
         authorizeUrl.searchParams.set("code_challenge_method", "S256");
         if (mode === "signup") {
-          authorizeUrl.searchParams.set("screen_hint", "signup");
+          const signupUrl = await tryCreateSignupUrl(authorizeUrl);
+          window.location.assign(signupUrl || authorizeUrl.toString());
+          return;
         }
-
         window.location.assign(authorizeUrl.toString());
+      }
+
+      async function tryCreateSignupUrl(authorizeUrl) {
+        try {
+          const response = await fetch(authorizeUrl.toString(), { credentials: "same-origin" });
+          const html = await response.text();
+          const doc = new DOMParser().parseFromString(html, "text/html");
+          const requestId = doc.querySelector('input[name="requestId"]')?.value;
+          return requestId ? `/sqlos/auth/signup?request=${encodeURIComponent(requestId)}` : null;
+        } catch {
+          return null;
+        }
       }
 
       async function completeOAuthCallback() {
