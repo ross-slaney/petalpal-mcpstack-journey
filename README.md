@@ -7,10 +7,10 @@ ChatGPT through MCP Stack.
 
 The browser app includes:
 
-- first-party SqlOS OAuth sign-in
+- first-party OAuth sign-in
 - a normal signed-in garden dashboard
 - add plant and water plant actions
-- per-user garden provisioning through SqlOS FGA
+- per-user garden access control
 - a ChatGPT setup panel with the hosted MCP URL
 
 The API exposes a few ChatGPT-friendly operations:
@@ -19,7 +19,7 @@ The API exposes a few ChatGPT-friendly operations:
 - list plants
 - create a plant
 - water a plant
-- trace the SqlOS FGA decision for a plant write
+- trace the access-control decision for a plant write
 
 Live walkthrough artifacts:
 
@@ -46,9 +46,9 @@ Useful URLs:
 - `http://localhost:5098/` for the PetalPal web app
 - `http://localhost:5098/oauth/callback` for the local browser OAuth callback
 - `http://localhost:5098/swagger` for OpenAPI
-- `http://localhost:5098/sample/config` for the SqlOS OAuth configuration
+- `http://localhost:5098/sample/config` for the OAuth configuration
 - `http://localhost:5098/.well-known/oauth-protected-resource` for protected resource metadata
-- `http://localhost:5098/sqlos` for the SqlOS dashboard
+- `http://localhost:5098/sqlos` for the local auth/admin dashboard
 
 MCP Stack CLI shape. Use a public URL or tunnel for `--openapi-url`; for a
 pure local run, export the Swagger JSON and pass it with `--openapi-file`.
@@ -61,7 +61,7 @@ mcpstack servers create \
   --json
 
 mcpstack gateways create \
-  --name "PetalPal SqlOS" \
+  --name "PetalPal OAuth" \
   --provider sqlos \
   --auth-server-url https://petalpal-mcpstack-journey.azurewebsites.net/sqlos/auth \
   --client-id petalpal-mcpstack-gateway \

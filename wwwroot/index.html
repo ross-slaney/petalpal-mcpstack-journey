@@ -563,9 +563,9 @@
             <div class="eyebrow">A normal SaaS app with OAuth behind it</div>
             <h1 id="heroTitle">A tiny garden SaaS your users can connect to ChatGPT.</h1>
             <p class="lead">
-              PetalPal is a real signed-in product dashboard backed by SqlOS OAuth and FGA.
-              Users create a garden, manage plants, and MCP Stack exposes the same protected
-              API to ChatGPT without a shared API key.
+              PetalPal is a real signed-in product dashboard. Users create a garden,
+              manage plants, and MCP Stack exposes the same protected API to ChatGPT
+              without a shared API key.
             </p>
             <div class="hero-actions">
               <button class="button primary" id="startHero" type="button">Start free</button>
@@ -573,8 +573,8 @@
               <a class="button ghost" href="/swagger">API docs</a>
             </div>
             <div class="trust-row">
-              <span class="pill">SqlOS OAuth</span>
-              <span class="pill">Per-user FGA</span>
+              <span class="pill">OAuth sign-in</span>
+              <span class="pill">Private user data</span>
               <span class="pill">MCP Stack Gateway</span>
             </div>
           </div>
@@ -625,18 +625,18 @@
           <div class="grid" id="garden">
             <aside class="card">
               <h3>Account</h3>
-              <p>SqlOS handles the browser sign-in. PetalPal keeps the garden scoped to your user.</p>
+              <p>PetalPal keeps each garden tied to the signed-in user, so the app and ChatGPT tools work on the same private data.</p>
               <div class="status-stack">
                 <div class="status-item">
                   <div class="status-label">Session</div>
                   <div class="status-value" id="sessionStatus">Signed in</div>
                 </div>
                 <div class="status-item">
-                  <div class="status-label">Authorization</div>
+                  <div class="status-label">Garden access</div>
                   <div class="status-value" id="resourceStatus">Loading</div>
                 </div>
                 <div class="status-item">
-                  <div class="status-label">FGA role</div>
+                  <div class="status-label">Access</div>
                   <div class="status-value">Owner</div>
                 </div>
               </div>
@@ -973,9 +973,9 @@
 
         elements.gardenTitle.textContent = "My Pocket Garden";
         elements.gardenLead.textContent =
-          "Your plants are scoped to your signed-in account. The API behind this page is the same one MCP Stack exposes to ChatGPT.";
-        elements.sessionStatus.textContent = "Signed in with SqlOS";
-        elements.resourceStatus.textContent = "Owner grant active";
+          "Your plants belong to your signed-in account. The API behind this page is the same one MCP Stack exposes to ChatGPT.";
+        elements.sessionStatus.textContent = "Signed in";
+        elements.resourceStatus.textContent = "Private garden active";
         renderPlants(garden.plants || []);
       }
 
