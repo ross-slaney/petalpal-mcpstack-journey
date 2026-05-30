@@ -11,7 +11,7 @@ The browser app includes:
 - a normal signed-in garden dashboard
 - add plant and water plant actions
 - per-user garden provisioning through SqlOS FGA
-- a ChatGPT setup panel with the MCP Stack Gateway URL
+- a ChatGPT setup panel with the hosted MCP URL
 
 The API exposes a few ChatGPT-friendly operations:
 
@@ -26,7 +26,7 @@ Live walkthrough artifacts:
 - App: https://petalpal-mcpstack-journey.azurewebsites.net
 - OpenAPI: https://petalpal-mcpstack-journey.azurewebsites.net/swagger/v1/swagger.json
 - MCP Stack guide: https://mcpstack.com/guides/petalpal-api-mcp
-- Verified MCP Gateway URL: https://api.mcpstack.com/api/v1/gateway/gw_petalpal-api-mcp/mcp
+- Hosted MCP URL: https://petalpal-api-mcp.mcp.mcpstack.com/mcp
 
 Run it locally with SQL Server available:
 
@@ -69,8 +69,5 @@ mcpstack gateways create \
   --scopes "openid profile email gardens.read gardens.write" \
   --json
 
-mcpstack gateway-public doctor \
-  --url https://api.mcpstack.com/api/v1/gateway/gw_petalpal-api-mcp/mcp \
-  --client chatgpt-web \
-  --json
+curl -i https://petalpal-api-mcp.mcp.mcpstack.com/mcp
 ```
